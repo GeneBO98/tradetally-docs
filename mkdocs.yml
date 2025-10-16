@@ -1,0 +1,143 @@
+site_name: TradeTally Documentation
+site_url: https://docs.tradetally.io
+site_description: Comprehensive trading journal and analytics platform documentation
+site_author: TradeTally Team
+
+repo_name: GeneBO98/tradetally
+repo_url: https://github.com/GeneBO98/tradetally
+edit_uri: ""
+
+theme:
+  name: material
+  language: en
+  palette:
+    # Light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    # Dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+  font:
+    text: Roboto
+    code: Roboto Mono
+
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.expand
+    - navigation.path
+    - navigation.top
+    - navigation.footer
+    - toc.follow
+    - toc.integrate
+    - search.suggest
+    - search.highlight
+    - search.share
+    - content.code.copy
+    - content.code.annotate
+    - content.tabs.link
+
+  logo: assets/images/logo.svg
+
+  icon:
+    repo: fontawesome/brands/github
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/GeneBO98/tradetally
+      name: TradeTally on GitHub
+    - icon: fontawesome/brands/docker
+      link: https://hub.docker.com/r/potentialmidas/tradetally
+      name: TradeTally on Docker Hub
+    - icon: fontawesome/solid/globe
+      link: https://tradetally.io
+      name: TradeTally Website
+    - icon: fontawesome/solid/comments
+      link: https://forum.tradetally.io
+      name: TradeTally Forum
+
+  version:
+    provider: mike
+
+markdown_extensions:
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - toc:
+      permalink: true
+      toc_depth: 3
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+
+plugins:
+  - search:
+      separator: '[\s\-,:!=\[\]()"/]+|(?!\b)(?=[A-Z][a-z])|\.(?!\d)|&[lg]t;'
+  - minify:
+      minify_html: true
+
+nav:
+  - TradeTally: index.md
+  - Getting Started:
+      - Installation: getting-started/installation.md
+      - Quick Start: getting-started/quick-start.md
+      - API Configuration: getting-started/api-keys.md
+  - Deployment:
+      - Docker Deployment: deployment/docker.md
+  - Usage:
+      - Importing Trades: usage/importing-trades.md
+  - Features:
+      - Dashboard: features/dashboard.md
+      - Analytics: features/analytics.md
+  - About:
+      - Live Demo: https://tradetally.io
+      - Forum: https://forum.tradetally.io
+      - GitHub: https://github.com/GeneBO98/tradetally
+      - Docker Hub: https://hub.docker.com/r/potentialmidas/tradetally
+
+extra_css:
+  - stylesheets/extra.css
+
+copyright: Copyright &copy; 2025 TradeTally
