@@ -3,7 +3,7 @@
 # MkDocs build script
 # Usage: ./build.sh
 
-MKDOCS_PATH="/Users/brennonoverton/Library/Python/3.9/bin/mkdocs"
+MKDOCS_PATH="/usr/bin/mkdocs"
 
 echo "Building MkDocs documentation..."
 echo ""
