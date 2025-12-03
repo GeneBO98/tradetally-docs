@@ -18,16 +18,32 @@ TradeTally supports importing trades from the following brokers:
 
 ## Import Process
 
+!!! info "Supported File Format"
+    TradeTally **only supports CSV files**. If your broker offers multiple export formats (like XML, Excel, or PDF), always select **CSV format**.
+
 ### Step 1: Export from Your Broker
 
 === "Lightspeed"
 
-    1. Log in to Lightspeed Trader
-    2. Go to **Reports/Account List**
-    3. Select your account
-    4. Go to **Blotter**
-    5. Select date range
-    6. Export as CSV
+    ### Web Portal Export
+
+    1. Log into **Lightspeed.com** website
+    2. Navigate to **My Account** → **Reports**
+    3. From the Reports dropdown, select **Account List**
+    4. From the STATEMENTS dropdown, select your **account number**
+    5. From the reports menu, select **Blotter**
+    6. Select your desired **date range**
+    7. Click **Apply** to display trades
+    8. Click the **CSV button** to download
+    9. **Extract the ZIP file** (downloads as ZIP format)
+
+    !!! tip "Alternative Navigation"
+        **My View** → **Reports** from top menu → Click **Confirm** (top right) → Select your account → Choose **Blotter** from submenu
+
+    !!! note "Important"
+        - Export is from **Lightspeed website**, not desktop application
+        - File downloads as ZIP - must extract before importing
+        - Depending on browser, you may need to right-click and "Save As"
 
     **Required Columns**:
     - Symbol
@@ -40,10 +56,32 @@ TradeTally supports importing trades from the following brokers:
 
 === "Charles Schwab"
 
-    1. Login to Schwab.com
-    2. Go to **Accounts** → **History**
-    3. Select **Closed Positions**
-    4. Export as CSV
+    ### Method 1: Export Realized Gains/Losses (For Closed Positions)
+
+    1. Log into **Schwab.com**
+    2. Click **Accounts** tab (upper left)
+    3. Select **History** from dropdown
+    4. Click the **Realized Gain/Loss** tab
+    5. Select specific account from dropdown (if multiple accounts)
+    6. Choose appropriate **date range/tax year**
+    7. Click **Export** button (upper right)
+    8. Save the CSV file to your computer
+
+    ### Method 2: Export Transaction History
+
+    1. Log into **Schwab.com**
+    2. Click **Accounts** → **Transaction History**
+    3. Select desired account from dropdown (if multiple)
+    4. Select date range or choose **Custom** for specific dates
+    5. Click **Search**
+    6. Click **Export** (top right)
+    7. Select **CSV** as export type
+    8. Click **Export** again to download
+
+    !!! warning "Critical Limitations"
+        - **Maximum 10,000 records per download** - for larger datasets, export smaller time periods separately
+        - **Schwab does not include trade times** - options data may be incomplete
+        - Consider using ThinkorSwim instead for complete options information
 
     **Required Columns**:
     - Symbol
@@ -56,39 +94,145 @@ TradeTally supports importing trades from the following brokers:
 
 === "ThinkorSwim"
 
-    1. Open ThinkorSwim
-    2. Go to **Monitor** → **Account Statement**
-    3. Select **Trade History**
-    4. Export as CSV
+    ### Desktop Platform Export
 
-    **Required Columns**:
-    - Symbol
-    - Exec Time
-    - Price
-    - Qty
-    - Side
-    - Commission
+    1. Open **ThinkorSwim desktop platform**
+    2. Go to **Monitor** tab
+    3. Open **Account Statement** page
+    4. Adjust time frame selector at top of page (default shows past day)
+    5. Verify correct account is selected
+    6. Click the **menu icon** (three lines) in upper right corner
+    7. Select **"Export to file"** from dropdown
+    8. CSV file saves to your computer as **AccountStatement.csv**
+
+    !!! warning "Export Limitation"
+        **Maximum 365 days (1 year) per export** - for multi-year data, export separate files for each year
+
+    !!! tip "Alternative Method"
+        Via TD Ameritrade website: **My Account** → **History & Statements** → **Transactions** → Set Type to "All transaction types" → Select date range → Click **Download**
+
+    **Required Columns** (Account Statement export includes these):
+    - **DESCRIPTION** or **Description** - Contains trade details (e.g., "BOT +1,000 AAPL @150.00")
+    - **TYPE** or **Type** - Must be "TRD" for trade rows
+    - **DATE** or **Date** - Trade date
+    - **TIME** or **Time** - Trade time
+    - **Misc Fees** - Optional fees
+    - **Commissions & Fees** - Optional commission
+
+    !!! note "How ThinkorSwim Format Works"
+        ThinkorSwim Account Statement exports include trade details in the DESCRIPTION field. The parser extracts:
+
+        - Action (BOT/SOLD) from description
+        - Quantity from description
+        - Symbol from description
+        - Price from description
+
+        Example: `"BOT +1,000 AAPL @150.00"` is parsed as Buy 1000 shares of AAPL at $150.00
 
 === "Interactive Brokers"
 
-    1. Login to IBKR Portal
-    2. Go to **Reports** → **Activity Statement**
-    3. Select date range
-    4. Download CSV format
+    ### Creating an Activity Flex Query
 
-    **Required Columns**:
-    - Symbol
-    - DateTime
-    - Price
-    - Quantity
-    - Commission
+    **Step 1: Access Flex Queries**
+
+    1. Log into [IBKR Client Portal](https://www.interactivebrokers.co.uk/sso/Login?RL=1)
+    2. Navigate to **Performance & Reports** → **Flex Queries**
+       - *Alternative*: Menu (top-left) → Reporting → Flex Queries
+
+    **Step 2: Create New Query**
+
+    1. Click the **"+" icon** in top-right corner of Activity Flex Query panel
+    2. Enter descriptive **Query Name** (e.g., "Export" or "Trade History")
+
+    **Step 3: Select Sections** (Click each section, Select All, then Save)
+
+    - ✅ Cash Transactions
+    - ✅ Corporate Actions
+    - ✅ Financial Instrument Information
+    - ✅ Grant Activity
+    - ✅ Incoming/Outgoing Trade Transfers
+    - ✅ Option Exercises, Assignments and Expirations
+    - ✅ **Trades** (most important)
+    - ✅ Transaction Fees
+    - ✅ Transfers
+
+    **Step 4: Configure Delivery Settings**
+
+    - **Accounts**: Click Add/Edit Accounts (important if multiple/migrated accounts)
+    - **Format**: Select **CSV** (TradeTally does not support XML)
+    - **Period**: Choose from Last 365 Calendar Days, Custom Date Range, etc.
+
+    **Step 5: Configure General Settings** (OPTIONAL - default works fine)
+
+    TradeTally supports multiple IBKR date formats automatically. The default settings work for most users.
+
+    For Trade Confirmation format, you can optionally set:
+    - **Date Format**: **yyyyMMdd** (e.g., 20241225)
+    - **Time Format**: **HHmmss** (e.g., 093000)
+    - **Date/Time Separator**: **semicolon (;)**
+
+    For Activity Statement format (most common), dates are in **MM-DD-YY** format (e.g., 12-25-24) and work automatically.
+
+    **Step 6: Finalize and Run**
+
+    1. Click **Continue** to review
+    2. Click **Create**, then **OK**
+    3. Select all relevant accounts
+    4. Click the **arrow icon** next to your query name
+    5. Choose your **time period** (max 1 year)
+    6. Select **CSV** format
+    7. Click **Run** and download the file
+
+    !!! warning "Export Limitation"
+        **Maximum 365 days (1 year) per export** - for older portfolios, create separate exports for each year using custom date ranges
+
+    !!! tip "Simpler Method"
+        For quick exports: **Account Management** → **Statements** → **Activity Statements** → Choose CSV format → Select frequency (daily, monthly, annual, or custom)
+
+    **Required Columns (Activity Statement)**:
+    - **Symbol** - Ticker symbol
+    - **DateTime** OR **Date/Time** - Both column names supported
+    - **Quantity** - Signed value (positive = buy, negative = sell)
+    - **Price** - Execution price
+    - **Commission** - Optional (negative values in IBKR CSVs)
+
+    **Expected Date Formats**:
+    - Activity Statement: `MM-DD-YY` (e.g., `12-25-24`) or `MM-DD-YY HH:MM`
+    - Trade Confirmation: `YYYYMMDD;HHMMSS` (e.g., `20241225;093000`)
+
+    !!! note "IBKR Uses Signed Quantities"
+        Unlike other brokers, IBKR uses signed quantities instead of a separate Buy/Sell column:
+
+        - **Positive quantity** = Buy transaction
+        - **Negative quantity** = Sell transaction
 
 === "E*TRADE"
 
-    1. Login to E*TRADE
-    2. Go to **Accounts** → **Transactions**
-    3. Select date range
-    4. Download as CSV
+    ### Method 1: Power E*TRADE Platform
+
+    1. Open **Power E*TRADE** platform
+    2. Navigate to **Account** tab → **Orders** page
+    3. Locate time frame selector at top:
+       - Predefined: "Today," "This Week," "This Month," "Year-to-Date"
+       - Custom: Use calendar icons for specific start/end dates
+    4. Click **download icon** (upper right corner)
+    5. CSV file automatically downloads as **"DownloadTxnHistory.csv"**
+
+    ### Method 2: E*TRADE Website
+
+    1. Log into **E*TRADE.com**
+    2. Click **Accounts** tab
+    3. Select **Transactions** from dropdown
+    4. Choose **"Custom Time Period"** from dropdown
+    5. Enter **From** and **To** dates
+    6. Click **Search**
+    7. After report loads, click **Download icon** (upper right)
+    8. Verify account and time frame are correct
+    9. Select **"Spreadsheet Format including Microsoft Excel Details"**
+    10. Click **Download** button (lower right)
+
+    !!! note "Supported Formats"
+        Both CSV and Excel formats (XLS/XLSX) are supported. No apparent maximum record or date limitation.
 
     **Required Columns**:
     - Symbol
@@ -97,6 +241,64 @@ TradeTally supports importing trades from the following brokers:
     - Quantity
     - Transaction Type
     - Commission
+
+=== "ProjectX (Futures)"
+
+    ### Export from Trades Tab
+
+    1. Log into your **ProjectX prop firm account**
+    2. Navigate to the **"Trades" tab**
+    3. Locate **"EXPORT"** button in **bottom right corner**
+    4. Click the **EXPORT** button
+    5. Select desired **date range** for trades
+    6. Click **Export** to confirm
+    7. CSV file saves to your desktop
+
+    !!! tip "Troubleshooting Blank Files"
+        If exported file appears blank, widen your date range:
+
+        - Start one day **before** first trade
+        - End a few days **after** last trade
+
+    !!! warning "Important"
+        **Only export from "Trades" tab** for compatibility - files from other tabs may not import correctly
+
+    **Required Columns** (ProjectX CSV export includes):
+    - **Id** - Trade ID (may have BOM character prefix)
+    - **ContractName** - Futures contract name
+    - **EnteredAt** - Entry timestamp (format: "10/01/2025 21:13:23 +02:00")
+    - **ExitedAt** - Exit timestamp
+    - **EntryPrice** - Entry price
+    - **ExitPrice** - Exit price
+    - **Fees** - Trading fees
+    - **PnL** - Profit/Loss
+    - **Size** - Position size
+    - **Type** - Long/Short
+    - **TradeDay** - Optional
+    - **TradeDuration** - Optional
+    - **Commissions** - Optional
+
+    **Supported Prop Firms:**
+
+    This works for all ProjectX-backed prop firms including:
+
+    - Topstep
+    - Alpha Futures
+    - TickTickTrader
+    - Bulenox
+    - TradeDay
+    - Blusky
+    - Goat Futures
+    - The Futures Desk
+    - DayTraders
+    - E8 Futures
+    - Blue Guardian Futures
+    - FuturesElite
+    - FXIFY
+    - Hola Prime
+    - Top One Futures
+    - Funding Futures
+    - TX3 Funding
 
 ### Step 2: Import into TradeTally
 
