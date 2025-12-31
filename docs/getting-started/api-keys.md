@@ -10,6 +10,7 @@ TradeTally integrates with several external APIs to provide enhanced features. T
 | Alpha Vantage | Chart visualization (fallback) | 25 calls/day | Optional |
 | OpenFIGI | CUSIP resolution | 25,000/month | Recommended |
 | Various AI Providers | AI recommendations | Varies | Optional |
+| Schwab | Automatic trade syncing | Free (requires developer account) | Optional |
 
 ## Finnhub API (Required for Full Features)
 
@@ -168,6 +169,46 @@ Instead of AI CUSIP resolution, use:
 1. **OpenFIGI API** (reliable, free, industry standard) ✓
 2. **Manual mapping** through the import interface
 3. **Broker-specific formats** that include ticker symbols
+
+## Broker Sync Configuration (Schwab)
+
+TradeTally supports automatic trade syncing from Schwab accounts via OAuth.
+
+### Prerequisites
+
+1. **HTTPS Domain**: Schwab requires HTTPS callback URLs
+2. **Schwab Developer Account**: Register at [developer.schwab.com](https://developer.schwab.com)
+3. **Encryption Key**: Required to secure stored tokens
+
+### Setup
+
+1. Register an app at [Schwab Developer Portal](https://developer.schwab.com)
+2. Set the callback URL to: `https://your-domain.com/api/broker-sync/connections/schwab/callback`
+3. Generate an encryption key and add to your `.env`:
+
+```bash
+# Generate encryption key
+openssl rand -hex 32
+```
+
+```env
+# Broker Sync Configuration
+BROKER_ENCRYPTION_KEY=your_generated_32_byte_hex_key
+
+# Schwab OAuth
+SCHWAB_CLIENT_ID=your_schwab_app_client_id
+SCHWAB_CLIENT_SECRET=your_schwab_app_client_secret
+SCHWAB_REDIRECT_URI=https://your-domain.com/api/broker-sync/connections/schwab/callback
+```
+
+!!! warning "Security"
+    The `BROKER_ENCRYPTION_KEY` is used to encrypt OAuth tokens stored in your database. Keep it secure and never share it. If you change this key, existing broker connections will need to be re-authenticated.
+
+### Features Enabled
+
+- **Automatic Trade Import**: Sync trades from your Schwab account
+- **Scheduled Syncing**: Configure daily, hourly, or manual sync
+- **Secure Token Storage**: OAuth tokens encrypted at rest
 
 ## CUSIP Resolution Priority
 
