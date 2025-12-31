@@ -116,3 +116,4 @@ This documentation uses MkDocs Material theme with:
 ## License
 
 Documentation is part of the TradeTally project.
+# tradetally-docs
