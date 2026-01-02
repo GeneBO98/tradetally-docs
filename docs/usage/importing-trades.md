@@ -308,8 +308,15 @@ TradeTally supports importing trades from the following brokers:
    - If your broker matches exactly, select it
    - If unsure, select **Auto-detect** (recommended)
    - For custom formats, select **Generic CSV**
-4. Review the import preview
-5. Click **Import** to confirm
+4. **Select Trading Account** (if you have accounts defined):
+   - Choose an account to associate imported trades with
+   - Select **"None (different broker/account)"** if importing for a new/different account
+   - If account is auto-detected in CSV, it will be used automatically
+5. Review the import preview
+6. Click **Import** to confirm
+
+!!! tip "Account Association"
+    TradeTally automatically detects account columns in CSV files with flexible matching (Account, Account ID, AcctId, etc.). Account identifiers are privacy-redacted to show only the last 4 characters (e.g., `****5678`). New accounts are auto-created when unrecognized identifiers are found during import.
 
 ### Step 3: Review Imported Trades
 

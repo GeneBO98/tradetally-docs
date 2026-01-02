@@ -131,6 +131,7 @@ nav:
   - Features:
       - Dashboard: features/dashboard.md
       - Analytics: features/analytics.md
+      - Trading Accounts: features/accounts.md
   - About:
       - Live Demo: https://tradetally.io
       - Forum: https://forum.tradetally.io
