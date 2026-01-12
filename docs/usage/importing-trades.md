@@ -14,6 +14,7 @@ TradeTally supports importing trades from the following brokers:
 | Interactive Brokers | CSV | Yes | Yes |
 | E*TRADE | CSV | Yes | Yes |
 | ProjectX (Futures) | CSV | Yes | Yes |
+| Questrade | CSV | Yes | Yes |
 | Generic | CSV | No | Optional |
 
 ## Import Process
@@ -299,6 +300,72 @@ TradeTally supports importing trades from the following brokers:
     - Top One Futures
     - Funding Futures
     - TX3 Funding
+
+=== "Questrade"
+
+    ### Export from Questrade Edge Application
+
+    !!! tip "Recommended Export Method"
+        Use the **Questrade Edge desktop application** for the most complete trade data. The web interface exports Excel files with less information.
+
+    **Step 1: Open Account Window**
+
+    1. Launch **Questrade Edge** desktop application
+    2. Click **Tools** in the top menu bar
+    3. Select **Account** from the dropdown
+
+    **Step 2: Configure Columns**
+
+    1. Click the **Executions** tab in the Account window
+    2. Right-click on the column headers
+    3. Select **"Edit columns"**
+    4. Click **"Restore Defaults"** in the bottom left
+    5. Scroll through the list and check the following columns:
+       - Currency
+       - Exec time
+       - Option
+       - Strategy
+       - Commission
+    6. Click **OK** to save your column configuration
+
+    **Step 3: Export Trades**
+
+    1. Right-click on the column headers again
+    2. Click **"Export..."**
+    3. Choose a location (e.g., Desktop)
+    4. Save the file with a descriptive name
+    5. File will be saved as CSV format
+
+    !!! note "Options Trading Support"
+        Questrade exports support both stocks and options. Options use the following action codes:
+
+        - **BTO** - Buy to Open (opening a long options position)
+        - **STC** - Sell to Close (closing a long options position)
+        - **STO** - Sell to Open (opening a short options position)
+        - **BTC** - Buy to Close (closing a short options position)
+
+    !!! info "Multi-Currency Support"
+        Questrade supports both CAD and USD trading. The currency column is automatically detected and preserved during import.
+
+    **Required Columns** (automatically included in Questrade Edge export):
+
+    - **Symbol** - Stock ticker or options symbol (e.g., `ECHI.TO` or `SLV20Feb26C55.00`)
+    - **Action** - Trade action (Buy, Sell, BTO, STC, BTC, STO)
+    - **Fill qty** - Number of shares or contracts filled
+    - **Fill price** - Execution price per share/contract
+    - **Currency** - Trading currency (CAD or USD)
+    - **Exec time** - Execution timestamp
+    - **Option** - Option type (Call/Put) or empty for stocks
+    - **Commission** - Trading commission
+
+    **Sample CSV Format**:
+
+    ```csv
+    "Symbol","Action","Fill qty","Fill price","Currency","Exec time","Total value","Time placed","Option","Strategy","Commission","Account"
+    "ECHI.TO","Buy","700","11.26","CAD","16 Dec 2025 11:15:58 AM","7,882.00","16 Dec 2025 11:15:58 AM","","","0.00","12345678 - Margin +"
+    "SLV20Feb26C55.00","BTO","4","6.95","USD","17 Dec 2025 09:38:14 AM","2,780.00","17 Dec 2025 09:38:14 AM","Call","","3.96","23456789 - TFSA (+)"
+    "SLV20Feb26C55.00","STC","4","10.30","USD","24 Dec 2025 10:47:11 AM","4,120.00","24 Dec 2025 10:47:11 AM","Call","","3.96","23456789 - TFSA (+)"
+    ```
 
 ### Step 2: Import into TradeTally
 
