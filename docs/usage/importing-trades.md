@@ -196,9 +196,28 @@ TradeTally supports importing trades from the following brokers:
     - **Quantity** - Signed value (positive = buy, negative = sell)
     - **Price** - Execution price
     - **Commission** - Optional (negative values in IBKR CSVs)
+    - **Conid** - Contract ID (CRITICAL for options - see below)
+
+    !!! warning "Options Trading: Include the Conid Column"
+        **For options trades, the `Conid` column is essential.** The Conid (Contract ID) is IBKR's unique identifier for each options contract and ensures trades are grouped correctly.
+
+        **Why Conid matters:**
+
+        - Options symbols can be complex and parsing may vary
+        - Multiple partial fills on the same contract need to be grouped together
+        - Different strikes/expirations of the same underlying must be tracked separately
+        - Conid guarantees accurate trade matching regardless of symbol format
+
+        **How to include Conid in your export:**
+
+        1. When creating your Flex Query, expand the **Trades** section
+        2. Find and enable the **Conid** checkbox
+        3. Save and run your query
+
+        Without the Conid column, options trades may be incorrectly grouped or split into separate trades.
 
     **Expected Date Formats**:
-    - Activity Statement: `MM-DD-YY` (e.g., `12-25-24`) or `MM-DD-YY HH:MM`
+    - Activity Statement: `DD-MM-YY` (e.g., `16-02-24`) or `DD-MM-YY HH:MM` - also supports `MM-DD-YY` automatically
     - Trade Confirmation: `YYYYMMDD;HHMMSS` (e.g., `20241225;093000`)
 
     !!! note "IBKR Uses Signed Quantities"
