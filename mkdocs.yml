@@ -126,6 +126,7 @@ nav:
       - API Configuration: getting-started/api-keys.md
   - Deployment:
       - Docker Deployment: deployment/docker.md
+      - Backup & Restore: deployment/backup.md
   - Usage:
       - Importing Trades: usage/importing-trades.md
   - Features:
