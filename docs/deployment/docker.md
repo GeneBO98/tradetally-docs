@@ -22,7 +22,7 @@ docker-compose up -d
 docker-compose logs -f app
 ```
 
-TradeTally will be available at `http://localhost` (port 80).
+TradeTally will be available at `http://localhost:8080`.
 
 ## Prerequisites
 
@@ -101,6 +101,44 @@ SCHWAB_CLIENT_SECRET=your_schwab_client_secret
 SCHWAB_REDIRECT_URI=https://your-domain.com/api/broker-sync/connections/schwab/callback
 ```
 
+### Feature Toggles
+
+Control background services and features to optimize resource usage:
+
+```env
+# Background Services (set to 'false' to disable)
+ENABLE_PRICE_MONITORING=true       # Real-time price monitoring for watchlists
+ENABLE_TRADE_ENRICHMENT=true       # Auto-enrich trades with market data
+ENABLE_JOB_RECOVERY=true           # Recover failed background jobs
+ENABLE_GAMIFICATION=true           # Achievements and badges system
+ENABLE_TRIAL_EMAILS=true           # Trial expiration email notifications
+ENABLE_OPTIONS_SCHEDULER=true      # Options-related scheduled tasks
+ENABLE_BACKUP_SCHEDULER=true       # Automated backup scheduling
+ENABLE_ENRICHMENT_CACHE_CLEANUP=true  # Clean stale enrichment cache
+FEATURES_BEHAVIORAL_ANALYTICS_ENABLED=true  # Behavioral pattern analysis
+
+# API Documentation
+ENABLE_SWAGGER=true                # Enable Swagger API docs at /api-docs
+
+# Database
+RUN_MIGRATIONS=true                # Auto-run migrations on startup
+```
+
+### System Configuration
+
+```env
+# Logging
+LOG_LEVEL=INFO                     # DEBUG, INFO, WARN, ERROR
+
+# Timezone (affects admin metrics)
+TZ=UTC                             # Server timezone
+
+# Rate Limiting (set RATE_LIMIT_ENABLED=false for self-hosted)
+RATE_LIMIT_ENABLED=true            # Enable API rate limiting
+RATE_LIMIT_MAX=1000                # Max requests per window
+RATE_LIMIT_WINDOW_MS=900000        # Window duration (15 minutes)
+```
+
 ## Docker Compose Configuration
 
 ### Production Setup
@@ -109,42 +147,94 @@ SCHWAB_REDIRECT_URI=https://your-domain.com/api/broker-sync/connections/schwab/c
 version: '3.8'
 
 services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: tradetally-db
+    environment:
+      POSTGRES_USER: ${DB_USER:-trader}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-trader_password}
+      POSTGRES_DB: ${DB_NAME:-tradetally}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - trader-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-trader} -d ${DB_NAME:-tradetally}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Application (Frontend + Backend)
   app:
     image: potentialmidas/tradetally:latest
     container_name: tradetally-app
-    ports:
-      - "80:80"
-    environment:
-      - NODE_ENV=production
-      - DB_HOST=postgres
-      - DB_PORT=5432
-      - DB_NAME=${DB_NAME}
-      - DB_USER=${DB_USER}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - JWT_SECRET=${JWT_SECRET}
-      - REGISTRATION_MODE=${REGISTRATION_MODE}
-      - FINNHUB_API_KEY=${FINNHUB_API_KEY}
-      - ALPHA_VANTAGE_API_KEY=${ALPHA_VANTAGE_API_KEY}
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
+    environment:
+      # Backend environment variables
+      NODE_ENV: ${NODE_ENV:-production}
+      PORT: ${PORT:-3000}
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: ${DB_USER:-trader}
+      DB_PASSWORD: ${DB_PASSWORD:-trader_password}
+      DB_NAME: ${DB_NAME:-tradetally}
+      JWT_SECRET: ${JWT_SECRET:-your_jwt_secret_here}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
+      # Frontend API URL
+      VITE_API_URL: ${VITE_API_URL:-http://localhost/api}
+      # CORS Configuration
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:5173}
+      CORS_ORIGINS: ${CORS_ORIGINS:-}
+      # Registration Control
+      REGISTRATION_MODE: ${REGISTRATION_MODE:-open}
+      # API Documentation
+      ENABLE_SWAGGER: ${ENABLE_SWAGGER:-true}
+      # External API Keys
+      FINNHUB_API_KEY: ${FINNHUB_API_KEY:-}
+      ALPHA_VANTAGE_API_KEY: ${ALPHA_VANTAGE_API_KEY:-}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      # Schwab OAuth Configuration
+      SCHWAB_CLIENT_ID: ${SCHWAB_CLIENT_ID:-}
+      SCHWAB_CLIENT_SECRET: ${SCHWAB_CLIENT_SECRET:-}
+      SCHWAB_REDIRECT_URI: ${SCHWAB_REDIRECT_URI:-}
+      BROKER_ENCRYPTION_KEY: ${BROKER_ENCRYPTION_KEY:-}
+      # Database Configuration
+      RUN_MIGRATIONS: ${RUN_MIGRATIONS:-true}
+      # Feature Toggles
+      ENABLE_PRICE_MONITORING: ${ENABLE_PRICE_MONITORING:-true}
+      ENABLE_TRADE_ENRICHMENT: ${ENABLE_TRADE_ENRICHMENT:-true}
+      ENABLE_GAMIFICATION: ${ENABLE_GAMIFICATION:-true}
+      # Logging
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      # Timezone
+      TZ: ${TZ:-UTC}
+      # Rate Limiting
+      RATE_LIMIT_ENABLED: ${RATE_LIMIT_ENABLED:-true}
+      RATE_LIMIT_MAX: ${RATE_LIMIT_MAX:-1000}
+      RATE_LIMIT_WINDOW_MS: ${RATE_LIMIT_WINDOW_MS:-900000}
+    ports:
+      - "8080:80"
+      - "3001:3000"
     volumes:
       - ./backend/src/logs:/app/backend/src/logs
       - ./backend/src/data:/app/backend/src/data
+      - ./backend/uploads:/app/backend/uploads
+    networks:
+      - trader-network
     restart: unless-stopped
 
-  postgres:
-    image: postgres:15-alpine
-    container_name: tradetally-db
-    environment:
-      - POSTGRES_DB=${DB_NAME}
-      - POSTGRES_USER=${DB_USER}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    restart: unless-stopped
+networks:
+  trader-network:
+    driver: bridge
 
 volumes:
   postgres_data:
+    driver: local
 ```
 
 ### Development Setup
@@ -202,9 +292,14 @@ docker-compose up -d
 
 ### Default Ports
 
-- **Frontend/Nginx**: Port 80
-- **Backend API**: Port 3000 (internal)
-- **PostgreSQL**: Port 5432 (internal)
+| Service | Host Port | Container Port | Description |
+|---------|-----------|----------------|-------------|
+| Frontend/Nginx | 8080 | 80 | Web interface |
+| Backend API | 3001 | 3000 | REST API (direct access) |
+| PostgreSQL | 5432 | 5432 | Database |
+
+!!! note "Port Configuration"
+    The default `docker-compose.yaml` maps port 8080 to the web interface. Access TradeTally at `http://localhost:8080`. Change `8080:80` to `80:80` if you want to use port 80.
 
 ### Reverse Proxy Setup
 
@@ -236,7 +331,8 @@ server {
 
 - **postgres_data**: Database files (persisted)
 - **./backend/src/logs**: Application logs (host mount)
-- **./backend/src/data**: Application data (host mount)
+- **./backend/src/data**: Application data, including CUSIP cache (host mount)
+- **./backend/uploads**: User uploaded files and attachments (host mount)
 
 ### Backup Database
 

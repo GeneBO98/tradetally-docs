@@ -8,7 +8,7 @@ Before setting up TradeTally, ensure you have the following installed:
 
 ### Required Software
 
-- **Node.js** (v14.0.0 or higher)
+- **Node.js** (v18.0.0 or higher)
 - **npm** (comes with Node.js)
 - **PostgreSQL** (v16 or higher)
 - **Git** (for cloning the repository)

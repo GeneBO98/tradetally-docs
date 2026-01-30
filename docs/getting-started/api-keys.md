@@ -308,7 +308,7 @@ All APIs implement rate limiting to prevent quota exhaustion:
 - API keys provided by platform
 - Higher rate limits
 - No setup required
-- $19.99/month for Pro
+- $8/month (or $80/year) for Pro
 
 ## Next Steps
 

@@ -6,7 +6,9 @@ Get up and running with TradeTally in minutes.
 
 ### 1. Create Admin Account
 
-1. Navigate to `http://localhost:5173`
+1. Navigate to TradeTally in your browser:
+    - **Docker deployment**: `http://localhost` or `http://localhost:8080`
+    - **Development mode**: `http://localhost:5173`
 2. Click "Sign Up" and create your account
 3. The first user automatically becomes admin
 4. If email is not configured, you'll be automatically verified
