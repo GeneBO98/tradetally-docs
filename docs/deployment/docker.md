@@ -93,9 +93,10 @@ APNS_KEY_ID=ABC123DEFG
 APNS_TEAM_ID=1234567890
 APNS_KEY_PATH=/path/to/keys/AuthKey.p8
 
-# Broker Sync Configuration (Optional)
-# Required if using Schwab integration
+# Broker Sync Configuration (Required for any broker sync - IBKR, Schwab, etc.)
 BROKER_ENCRYPTION_KEY=your_32_byte_hex_key  # Generate with: openssl rand -hex 32
+
+# Schwab OAuth (Optional - only if using Schwab sync)
 SCHWAB_CLIENT_ID=your_schwab_client_id
 SCHWAB_CLIENT_SECRET=your_schwab_client_secret
 SCHWAB_REDIRECT_URI=https://your-domain.com/api/broker-sync/connections/schwab/callback

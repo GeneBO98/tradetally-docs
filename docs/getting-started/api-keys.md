@@ -11,6 +11,7 @@ TradeTally integrates with several external APIs to provide enhanced features. T
 | OpenFIGI | CUSIP resolution | 25,000/month | Recommended |
 | Various AI Providers | AI recommendations | Varies | Optional |
 | Schwab | Automatic trade syncing | Free (requires developer account) | Optional |
+| IBKR | Automatic trade syncing | Free (requires Flex Query setup) | Optional |
 
 ## Finnhub API (Required for Full Features)
 
@@ -170,21 +171,13 @@ Instead of AI CUSIP resolution, use:
 2. **Manual mapping** through the import interface
 3. **Broker-specific formats** that include ticker symbols
 
-## Broker Sync Configuration (Schwab)
+## Broker Sync Configuration
 
-TradeTally supports automatic trade syncing from Schwab accounts via OAuth.
+TradeTally supports automatic trade syncing from supported brokers. All broker sync connections require the `BROKER_ENCRYPTION_KEY` to encrypt stored credentials.
 
-### Prerequisites
+### Encryption Key (Required for All Broker Sync)
 
-1. **HTTPS Domain**: Schwab requires HTTPS callback URLs
-2. **Schwab Developer Account**: Register at [developer.schwab.com](https://developer.schwab.com)
-3. **Encryption Key**: Required to secure stored tokens
-
-### Setup
-
-1. Register an app at [Schwab Developer Portal](https://developer.schwab.com)
-2. Set the callback URL to: `https://your-domain.com/api/broker-sync/connections/schwab/callback`
-3. Generate an encryption key and add to your `.env`:
+Generate an encryption key and add it to your `.env`:
 
 ```bash
 # Generate encryption key
@@ -192,19 +185,64 @@ openssl rand -hex 32
 ```
 
 ```env
-# Broker Sync Configuration
 BROKER_ENCRYPTION_KEY=your_generated_32_byte_hex_key
+```
 
-# Schwab OAuth
+!!! warning "Security"
+    The `BROKER_ENCRYPTION_KEY` is used to encrypt broker credentials and OAuth tokens stored in your database. Keep it secure and never share it. If you change this key, existing broker connections will need to be re-authenticated.
+
+!!! danger "Missing Encryption Key"
+    If `BROKER_ENCRYPTION_KEY` is not set, broker sync connections will fail with the error: `BROKER_ENCRYPTION_KEY environment variable is not set`. This applies to all brokers (IBKR, Schwab, etc.).
+
+### Interactive Brokers (IBKR)
+
+IBKR sync uses Flex Queries to retrieve trade data.
+
+**Prerequisites:**
+
+1. **IBKR Account** with Client Portal access
+2. **Flex Query** configured (see [Importing Trades - IBKR](../usage/importing-trades.md) for Flex Query setup)
+3. **Flex Query Token** generated in IBKR Account Management
+4. **`BROKER_ENCRYPTION_KEY`** set in your `.env` file
+
+**Setup:**
+
+1. Log into [IBKR Client Portal](https://www.interactivebrokers.com)
+2. Navigate to **Settings** > **Reporting** > **Flex Queries**
+3. Create or use an existing Activity Flex Query
+4. Generate a **Flex Web Service Token** under **Settings** > **Reporting** > **FlexWeb Service**
+5. In TradeTally, go to **Settings** > **Broker Sync** > **Add IBKR Connection**
+6. Enter your Flex Query Token and Query ID
+
+**Features Enabled:**
+
+- **Automatic Trade Import**: Sync trades from your IBKR account via Flex Queries
+- **Scheduled Syncing**: Configure daily, hourly, or manual sync
+- **Secure Credential Storage**: Flex Query tokens encrypted at rest
+
+### Schwab
+
+Schwab sync uses OAuth for authenticated access to trade data.
+
+**Prerequisites:**
+
+1. **HTTPS Domain**: Schwab requires HTTPS callback URLs
+2. **Schwab Developer Account**: Register at [developer.schwab.com](https://developer.schwab.com)
+3. **`BROKER_ENCRYPTION_KEY`** set in your `.env` file
+
+**Setup:**
+
+1. Register an app at [Schwab Developer Portal](https://developer.schwab.com)
+2. Set the callback URL to: `https://your-domain.com/api/broker-sync/connections/schwab/callback`
+3. Add Schwab credentials to your `.env`:
+
+```env
 SCHWAB_CLIENT_ID=your_schwab_app_client_id
 SCHWAB_CLIENT_SECRET=your_schwab_app_client_secret
 SCHWAB_REDIRECT_URI=https://your-domain.com/api/broker-sync/connections/schwab/callback
 ```
 
-!!! warning "Security"
-    The `BROKER_ENCRYPTION_KEY` is used to encrypt OAuth tokens stored in your database. Keep it secure and never share it. If you change this key, existing broker connections will need to be re-authenticated.
-
-### Features Enabled
+**Features Enabled:**
 
 - **Automatic Trade Import**: Sync trades from your Schwab account
 - **Scheduled Syncing**: Configure daily, hourly, or manual sync
