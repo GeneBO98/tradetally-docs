@@ -15,6 +15,7 @@ TradeTally supports importing trades from the following brokers:
 | E*TRADE | CSV | Yes | Yes |
 | ProjectX (Futures) | CSV | Yes | Yes |
 | Questrade | CSV | Yes | Yes |
+| Tastytrade | CSV | Yes | Yes |
 | Generic | CSV | No | Optional |
 
 ## Import Process
@@ -319,6 +320,41 @@ TradeTally supports importing trades from the following brokers:
     - Top One Futures
     - Funding Futures
     - TX3 Funding
+
+=== "Tastytrade"
+
+    ### Export Transaction History
+
+    1. Log into your **Tastytrade** account at [tastytrade.com](https://tastytrade.com)
+    2. Navigate to **History** tab
+    3. Select **Transactions** sub-tab
+    4. Set your desired **date range** using the date filters
+    5. Click the **CSV** export/download button
+    6. Save the file to your computer
+
+    !!! tip "Transaction Types"
+        The Tastytrade CSV export includes multiple row types (Trade, Receive Deliver, Money Movement). TradeTally automatically filters for **Trade** rows only and ignores non-trade entries.
+
+    !!! note "Options Support"
+        Tastytrade exports include full options data with OCC-format symbols. The parser automatically detects options contracts and applies the correct 100x multiplier for equity options.
+
+    **Required Columns** (included in standard Tastytrade export):
+
+    - **Date** - Execution timestamp (ISO 8601 format)
+    - **Type** - Row type (only "Trade" rows are processed)
+    - **Action** - BUY_TO_OPEN, SELL_TO_CLOSE, etc.
+    - **Symbol** - Ticker or OCC option symbol
+    - **Instrument Type** - Equity, Equity Option, Future, etc.
+    - **Quantity** - Number of shares/contracts
+    - **Average Price** - Execution price
+    - **Commissions** - Trading commissions
+    - **Fees** - Exchange and regulatory fees
+    - **Multiplier** - Contract multiplier (100 for equity options)
+    - **Root Symbol** - Underlying ticker for options
+    - **Underlying Symbol** - Underlying symbol
+    - **Expiration Date** - Options expiration date
+    - **Strike Price** - Options strike price
+    - **Call or Put** - Option type
 
 === "Questrade"
 
