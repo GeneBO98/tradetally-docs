@@ -16,6 +16,12 @@ TradeTally supports importing trades from the following brokers:
 | ProjectX (Futures) | CSV | Yes | Yes |
 | Questrade | CSV | Yes | Yes |
 | Tastytrade | CSV | Yes | Yes |
+| PaperMoney (ThinkorSwim) | CSV | Yes | No |
+| TradingView | CSV | Yes | Yes |
+| TradingView Performance | CSV | No (uses broker P&L) | No |
+| TradeStation | CSV | Yes | Yes |
+| Webull | CSV | Yes | No |
+| Tradovate (Futures) | CSV | Yes | No |
 | Generic | CSV | No | Optional |
 
 ## Import Process
@@ -421,6 +427,249 @@ TradeTally supports importing trades from the following brokers:
     "SLV20Feb26C55.00","BTO","4","6.95","USD","17 Dec 2025 09:38:14 AM","2,780.00","17 Dec 2025 09:38:14 AM","Call","","3.96","23456789 - TFSA (+)"
     "SLV20Feb26C55.00","STC","4","10.30","USD","24 Dec 2025 10:47:11 AM","4,120.00","24 Dec 2025 10:47:11 AM","Call","","3.96","23456789 - TFSA (+)"
     ```
+
+=== "PaperMoney (ThinkorSwim)"
+
+    ### Export from PaperMoney Platform
+
+    PaperMoney is ThinkorSwim's paper trading simulator. The export contains multiple sections, and TradeTally automatically extracts the "Filled Orders" section.
+
+    1. Open **ThinkorSwim** desktop platform
+    2. Switch to the **PaperMoney** account (paper trading mode)
+    3. Go to **Monitor** tab
+    4. Open **Activity and Positions** page
+    5. Click on the **Filled Orders** section to expand it
+    6. Click the **menu icon** (three lines) in the upper right corner
+    7. Select **"Export to file"** from the dropdown
+    8. Save the CSV file to your computer
+
+    !!! note "Multi-Section CSV"
+        PaperMoney exports contain multiple sections (Filled Orders, Canceled Orders, Rolling Strategies, etc.). TradeTally automatically finds and processes only the **Filled Orders** section -- no manual editing required.
+
+    !!! info "No Commission Data"
+        PaperMoney is a simulated trading environment, so commission data is not included in the export. All commissions will be recorded as $0.
+
+    **Required Columns** (included in PaperMoney export):
+
+    - **Exec Time** - Execution timestamp (format: `9/19/25 13:24:32`)
+    - **Spread** - Spread type
+    - **Side** - Buy or Sell
+    - **Qty** - Quantity of shares/contracts
+    - **Pos Effect** - Position effect (TO OPEN, TO CLOSE)
+    - **Symbol** - Ticker symbol
+    - **Price** or **Net Price** - Execution price
+    - **Type** - Instrument type (STOCK, etc.)
+
+=== "TradingView"
+
+    ### Export from TradingView Paper Trading / Broker
+
+    TradingView's order export provides individual filled orders that TradeTally groups into round-trip trades automatically.
+
+    1. Open **TradingView** in your browser
+    2. Open the **Trading Panel** at the bottom of the chart
+    3. Click on the **History** tab to see past orders
+    4. Click the **Export** or **Download** icon (usually a downward arrow)
+    5. Select **CSV** format
+    6. Save the file to your computer
+
+    !!! tip "Only Filled Orders Are Processed"
+        The export may include cancelled, pending, and rejected orders. TradeTally automatically filters for **Filled** orders only and ignores all other statuses.
+
+    !!! info "Leverage Information"
+        If your TradingView broker supports leveraged trading, the leverage amount is recorded in the trade notes for reference.
+
+    **Required Columns** (included in TradingView export):
+
+    - **Symbol** - Ticker symbol
+    - **Side** - Buy or Sell
+    - **Status** - Order status (only "Filled" orders are processed)
+    - **Qty** - Quantity
+    - **Fill Price** - Execution fill price
+    - **Commission** - Trading commission
+    - **Placing Time** - When the order was placed
+    - **Closing Time** - When the order was filled
+    - **Order ID** - Unique order identifier
+    - **Type** - Order type (Market, Limit, etc.)
+    - **Leverage** - Leverage ratio (if applicable)
+
+=== "TradingView Performance"
+
+    ### Export from TradingView Strategy Performance
+
+    This format is for TradingView's **Strategy Tester** performance export, which provides completed round-trip trades with entry and exit data already paired.
+
+    1. Open **TradingView** in your browser
+    2. Apply a **Pine Script strategy** to your chart
+    3. Click the **Strategy Tester** tab at the bottom
+    4. Go to the **List of Trades** section
+    5. Click the **Export** or **Download** icon
+    6. Save the CSV file to your computer
+
+    !!! note "Pre-Paired Trades"
+        Unlike the standard TradingView order export, this format already contains completed trades with both entry and exit data. Each row represents one round-trip trade.
+
+    !!! warning "No Commission Data"
+        The TradingView Performance export does not include commission information. All commissions will be recorded as $0.
+
+    **Required Columns** (included in TradingView Performance export):
+
+    - **symbol** - Ticker or futures symbol
+    - **qty** - Number of contracts/shares
+    - **buyPrice** - Buy execution price
+    - **sellPrice** - Sell execution price
+    - **pnl** - Profit/Loss for the trade
+    - **boughtTimestamp** - Entry timestamp (Unix milliseconds)
+    - **soldTimestamp** - Exit timestamp (Unix milliseconds)
+    - **buyFillId** - Buy fill identifier
+    - **sellFillId** - Sell fill identifier
+    - **duration** - Trade duration
+
+    **Sample CSV Format**:
+
+    ```csv
+    symbol,_priceFormat,_priceFormatType,_tickSize,buyFillId,sellFillId,qty,buyPrice,sellPrice,pnl,boughtTimestamp,soldTimestamp,duration
+    MNQZ5,0.00,price,0.25,fill_001,fill_002,2,25024.75,25027.25,10.00,1696000000000,1696003600000,1h
+    ```
+
+=== "TradeStation"
+
+    ### Export from TradeStation / TradeNote
+
+    TradeStation exports individual transactions with detailed fee breakdowns. TradeTally groups these into round-trip trades using position tracking.
+
+    1. Open **TradeStation** desktop platform
+    2. Navigate to **Accounts** or **Trade Manager**
+    3. Select the **Orders** or **Order History** tab
+    4. Set your desired **date range**
+    5. Click **Export** or the download icon
+    6. Select **CSV** format and save the file
+
+    !!! tip "Detailed Fee Tracking"
+        TradeStation exports include granular fee columns (SEC, TAF, NSCC, Nasdaq, ECN fees) that are all combined into a single commission total during import.
+
+    !!! note "Transaction-Based Export"
+        TradeStation exports individual buy/sell transactions, not completed round-trip trades. TradeTally automatically matches entries with exits using position tracking logic.
+
+    **Required Columns** (included in TradeStation export):
+
+    - **Symbol** - Ticker symbol
+    - **T/D** - Trade date
+    - **S/D** - Settlement date
+    - **Side** - Buy or Sell
+    - **Qty** - Quantity of shares/contracts
+    - **Price** - Execution price
+    - **Exec Time** - Execution time
+    - **Account** - Account identifier
+    - **Currency** - Trading currency (defaults to USD)
+    - **Type** - Instrument type (E = Equity, O = Option)
+    - **Comm** - Commission
+    - **SEC** - SEC fee
+    - **TAF** - TAF fee
+    - **NSCC** - NSCC fee
+    - **Nasdaq** - Nasdaq fee
+    - **ECN Remove** / **ECN Add** - ECN fees
+    - **Gross Proceeds** / **Net Proceeds** - Trade proceeds
+    - **Note** - Order notes
+
+    **Sample CSV Format**:
+
+    ```csv
+    Account,T/D,S/D,Currency,Type,Side,Symbol,Qty,Price,Exec Time,Comm,SEC,TAF,NSCC,Nasdaq,ECN Remove,ECN Add,Gross Proceeds,Net Proceeds,Clr Broker,Liq,Note
+    12345,01/15/2025,01/17/2025,USD,E,Buy,AAPL,100,150.00,09:35:12,1.00,0.02,0.01,0.01,0.00,0.00,0.00,-15000.00,-15001.04,APEX,A,
+    ```
+
+=== "Webull"
+
+    ### Export from Webull App or Website
+
+    Webull exports include both stock and options orders with full OCC-format option symbols.
+
+    1. Open **Webull** desktop app or log into **webull.com**
+    2. Go to **Account** or **My Account**
+    3. Navigate to **Orders** → **Order History** (or **Filled Orders**)
+    4. Set your desired **date range**
+    5. Click **Export** or the download/CSV icon
+    6. Save the CSV file to your computer
+
+    !!! tip "Options Support"
+        Webull exports include OCC-format option symbols (e.g., `SPY251114C00672000`). TradeTally automatically detects options contracts, extracts the underlying symbol, strike price, expiration, and applies the correct 100x multiplier for equity options.
+
+    !!! info "No Separate Fee Data"
+        Webull's order export does not include a separate fees/commission column. Fees are typically $0 for US equities on Webull. All commissions will be recorded as $0.
+
+    **Required Columns** (included in Webull export):
+
+    - **Name** - Security name
+    - **Symbol** - Ticker symbol (or OCC option symbol)
+    - **Side** - Buy or Sell
+    - **Status** - Order status (only "Filled" orders are processed)
+    - **Filled** - Number of shares/contracts filled
+    - **Avg Price** - Average fill price
+    - **Filled Time** - Fill timestamp (format: `11/14/2025 11:31:56 EST`)
+    - **Time-in-Force** - Order duration type
+    - **Placed Time** - When the order was placed
+
+    **Sample CSV Format**:
+
+    ```csv
+    Name,Symbol,Side,Status,Filled,Avg Price,Time-in-Force,Placed Time,Filled Time
+    "SPDR S&P 500 ETF",SPY251114C00672000,Buy,Filled,5,3.25,Day,11/14/2025 11:30:00 EST,11/14/2025 11:31:56 EST
+    ```
+
+=== "Tradovate (Futures)"
+
+    ### Export from Tradovate Platform
+
+    Tradovate is a futures trading platform. The export provides individual filled orders that TradeTally groups into round-trip trades with proper futures point value calculations.
+
+    1. Open **Tradovate** desktop or web platform
+    2. Navigate to the **Orders** or **Order History** section
+    3. Set your desired **date range**
+    4. Click **Export** or the download icon
+    5. Select **CSV** format
+    6. Save the file to your computer
+
+    !!! tip "Futures Point Values"
+        TradeTally automatically detects the futures product (e.g., MES, NQ, ES) from the contract symbol and applies the correct point value for accurate P&L calculations.
+
+    !!! note "Contract Symbol Format"
+        Tradovate uses standard futures contract symbols like `MESZ5` where `MES` is the product, `Z` is the month code (December), and `5` is the year (2025). TradeTally parses this automatically.
+
+    !!! info "No Fee Data"
+        Tradovate's order export does not include a separate fees column. Commissions will be recorded as $0. You can manually edit trades after import to add fee data if needed.
+
+    **Required Columns** (included in Tradovate export):
+
+    - **Contract** - Full contract symbol (e.g., `MESZ5`)
+    - **Product** - Base product name (e.g., `MES`)
+    - **Product Description** - Full product name
+    - **B/S** - Buy or Sell
+    - **Filled Qty** or **filledQty** - Number of contracts filled
+    - **Avg Fill Price** or **avgPrice** - Average fill price
+    - **Fill Time** - Fill timestamp (format: `11/25/2025 04:38:24`)
+    - **Status** - Order status (only "Filled" orders are processed)
+    - **Order ID** or **orderId** - Unique order identifier
+    - **Text** - Order text (used to detect entry vs exit orders)
+
+    **Sample CSV Format**:
+
+    ```csv
+    orderId,Account,Contract,Product,Product Description,Status,B/S,Filled Qty,Avg Fill Price,Fill Time,Text
+    12345,DEMO,MESZ5,MES,Micro E-mini S&P 500,Filled,Buy,2,5025.50,11/25/2025 04:38:24,
+    12346,DEMO,MESZ5,MES,Micro E-mini S&P 500,Filled,Sell,2,5030.25,11/25/2025 05:12:10,Exit
+    ```
+
+    **Futures Month Codes**:
+
+    | Code | Month | Code | Month |
+    |------|-------|------|-------|
+    | F | January | N | July |
+    | G | February | Q | August |
+    | H | March | U | September |
+    | J | April | V | October |
+    | K | May | X | November |
+    | M | June | Z | December |
 
 ### Step 2: Import into TradeTally
 

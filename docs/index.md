@@ -10,7 +10,7 @@ TradeTally is a powerful trading journal and analytics platform built with Vue.j
 
 ## Key Features
 
-- **Multi-Broker Support** - Import trades from Lightspeed, Charles Schwab, ThinkorSwim, IBKR, E*TRADE
+- **Multi-Broker Support** - Import trades from Lightspeed, Charles Schwab, ThinkorSwim, IBKR, E*TRADE, Webull, TradeStation, TradingView, Tradovate, Questrade, Tastytrade, and more
 - **Real-time Market Data** - Live stock quotes and unrealized P&L tracking
 - **AI-Powered Analytics** - Personalized trading recommendations using various AI providers
 - **Comprehensive Analytics** - Dashboard with P&L tracking, win rates, performance metrics

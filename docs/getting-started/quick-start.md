@@ -77,6 +77,14 @@ TradeTally supports importing trades from various brokers. Each broker has speci
 - **ThinkorSwim**: Standard CSV export
 - **IBKR**: Activity Statement CSV
 - **E*TRADE**: Transaction history CSV
+- **Webull**: Stock and options order history
+- **TradeStation**: Transaction export with detailed fee breakdown
+- **TradingView**: Order history and strategy performance exports
+- **Tradovate**: Futures order history with point value support
+- **PaperMoney**: ThinkorSwim paper trading simulator
+- **Questrade**: Edge desktop application export
+- **Tastytrade**: Transaction history with full options support
+- **ProjectX**: Futures prop firm trades (Topstep, and more)
 
 ### CUSIP Resolution
 
