@@ -333,5 +333,5 @@ Dashboard is fully responsive:
 ## Next Steps
 
 - [Analytics](analytics.md) - Deep dive into performance
-- [Trade Management](../usage/trade-management.md) - Edit and organize trades
 - [Importing Trades](../usage/importing-trades.md) - Add more data
+- [Trading Accounts](accounts.md) - Manage brokerage accounts

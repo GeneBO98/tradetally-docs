@@ -352,37 +352,25 @@ After analysis:
 4. Track progress over time
 5. Review and adjust regularly
 
-## Gamification & Achievements
+## Related Analytics Features
 
-### Achievement System
+TradeTally offers several specialized analytics modules beyond the core analytics page:
 
-Track milestones:
+### Behavioral Analytics (Pro)
 
-- Profit targets
-- Win rate goals
-- Consistency achievements
-- Volume milestones
+Deep pattern detection for trading psychology, including revenge trading, overconfidence, and loss aversion analysis. See the dedicated [Behavioral Analytics](behavioral-analytics.md) page.
 
-**Progress Tracking**:
-- XP-based system
-- Visual progress bars
-- Completion status
-- Reward notifications
+### Monthly Performance
 
-### Leaderboards
+Month-by-month breakdown of trading results with comparison tools and trend identification.
 
-Compete with peers:
+### Year Wrapped
 
-- **All-Time P&L**: Total profit/loss
-- **Monthly P&L**: Current month ranking
-- **Weekly P&L**: Current week ranking
-- **Best Trade**: Highest single profit
-- **Consistency**: Most stable performance
+Annual summary of your trading year, including top trades, achievements earned, and key statistics. Available at the end of each calendar year.
 
-**Privacy**:
-- Anonymous usernames
-- Optional participation
-- Real names never shown
+### Gamification & Achievements
+
+Track milestones and compete with peers through the XP-based achievement system and leaderboards. See the dedicated [Leaderboards & Achievements](leaderboards.md) page.
 
 !!! note "Requirements"
     Enable with `ENABLE_GAMIFICATION=true` in backend `.env`
@@ -429,5 +417,8 @@ Compete with peers:
 ## Next Steps
 
 - [Dashboard](dashboard.md) - Overview of performance
-- [Trade Management](../usage/trade-management.md) - Edit trades
+- [Behavioral Analytics](behavioral-analytics.md) - Psychology and pattern detection
+- [Playbooks](playbooks.md) - Structured trading setups and adherence reviews
+- [Trading Journal](journal.md) - Daily journaling and reflection
+- [Calendar](calendar.md) - Visual trade calendar with P&L heatmap
 - [API Configuration](../getting-started/api-keys.md) - Enable advanced features

@@ -22,6 +22,7 @@ TradeTally supports importing trades from the following brokers:
 | TradeStation | CSV | Yes | Yes |
 | Webull | CSV | Yes | No |
 | Tradovate (Futures) | CSV | Yes | No |
+| AvaTrade | CSV | Yes | Yes |
 | Generic | CSV | No | Optional |
 
 ## Import Process
@@ -671,6 +672,22 @@ TradeTally supports importing trades from the following brokers:
     | K | May | X | November |
     | M | June | Z | December |
 
+=== "AvaTrade"
+
+    ### Export from AvaTrade
+
+    AvaTrade provides German-language order exports for stocks and futures. TradeTally auto-detects the AvaTrade format and handles symbol normalization automatically.
+
+    1. Log in to your **AvaTrade** platform
+    2. Navigate to your **Order History** or **Trade History**
+    3. Export as **CSV**
+
+    !!! note "Symbol Format"
+        AvaTrade uses a prefixed symbol format (e.g., `F.US.MESM26` for futures, `S.US.AAPL` for stocks). TradeTally automatically normalizes these to standard symbols (`MESM26`, `AAPL`).
+
+    !!! info "German Language Support"
+        AvaTrade exports may use German-language headers and values. TradeTally auto-translates common German terms (e.g., "Kauf" for Buy, "Verkauf" for Sell).
+
 ### Step 2: Import into TradeTally
 
 1. Navigate to the **Import** tab in TradeTally
@@ -979,4 +996,5 @@ To re-import corrected data:
 
 - [Dashboard Guide](../features/dashboard.md) - View your performance
 - [Analytics](../features/analytics.md) - Analyze your trades
-- [Trade Management](trade-management.md) - Edit and organize trades
+- [Broker Sync](../features/broker-sync.md) - Auto-sync trades via API
+- [Trading Accounts](../features/accounts.md) - Manage brokerage accounts

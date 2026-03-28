@@ -129,10 +129,24 @@ nav:
       - Backup & Restore: deployment/backup.md
   - Usage:
       - Importing Trades: usage/importing-trades.md
+      - Broker Sync: features/broker-sync.md
   - Features:
       - Dashboard: features/dashboard.md
       - Analytics: features/analytics.md
+      - Behavioral Analytics: features/behavioral-analytics.md
+      - Trading Journal: features/journal.md
+      - Calendar: features/calendar.md
+      - Playbooks: features/playbooks.md
       - Trading Accounts: features/accounts.md
+      - Cashflow & Equity: features/cashflow.md
+      - Watchlists & Analysis: features/watchlists.md
+      - Leaderboards & Achievements: features/leaderboards.md
+      - Alerts & Notifications: features/alerts-notifications.md
+      - User Profile: features/profile.md
+      - Plans & Billing: features/billing.md
+  - Integrations:
+      - API & Webhooks: features/api-webhooks.md
+      - Mobile App: features/mobile.md
   - About:
       - Live Demo: https://tradetally.io
       - Forum: https://forum.tradetally.io
@@ -142,4 +156,4 @@ nav:
 extra_css:
   - stylesheets/extra.css
 
-copyright: Copyright &copy; 2025 TradeTally
+copyright: Copyright &copy; 2025-2026 TradeTally
