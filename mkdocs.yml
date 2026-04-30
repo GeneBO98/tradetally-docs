@@ -117,14 +117,13 @@ plugins:
       minify_html: true
 
 nav:
-  - TradeTally: index.md
-  - Getting Started:
+  - Overview: index.md
+  - Deployment:
       - Quick Start (Docker): deployment/docker.md
+      - Backup & Restore: deployment/backup.md
+  - Development:
       - Native Installation: getting-started/installation.md
       - API Configuration: getting-started/api-keys.md
-  - Deployment:
-      - Docker Deployment: deployment/docker.md
-      - Backup & Restore: deployment/backup.md
   - Usage:
       - Importing Trades: usage/importing-trades.md
       - Broker Sync: features/broker-sync.md
