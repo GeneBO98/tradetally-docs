@@ -13,6 +13,7 @@ TradeTally supports importing trades from the following brokers:
 | ThinkorSwim | CSV | Yes | Yes |
 | Interactive Brokers | CSV | Yes | Yes |
 | E*TRADE | CSV | Yes | Yes |
+| Firstrade | CSV | Yes | Yes |
 | ProjectX (Futures) | CSV | Yes | Yes |
 | Questrade | CSV | Yes | Yes |
 | Tastytrade | CSV | Yes | Yes |
@@ -269,6 +270,46 @@ TradeTally supports importing trades from the following brokers:
     - Quantity
     - Transaction Type
     - Commission
+
+=== "Firstrade"
+
+    ### Export Account History
+
+    1. Log into **Firstrade**
+    2. Go to **Accounts** → **History**
+    3. Select the account you want to export
+    4. Choose the date range for the trades you want to import
+    5. Click **Download Account History**
+    6. Save the file as CSV
+    7. Upload the raw CSV to TradeTally and choose **Auto-Detect** or **Firstrade**
+
+    !!! tip "Use Account History"
+        Firstrade account history exports include both trade rows and cash activity rows. TradeTally automatically imports only `RecordType=Trade` rows and skips wires, interest, dividends, insured deposit sweeps, and other `RecordType=Financial` rows.
+
+    !!! note "Options and Assignments"
+        Firstrade may leave the `Symbol` column blank for options trades and include the contract details in `Description` instead. TradeTally parses descriptions like `PUT IAG 02/21/25 6` or `CALL IAG 03/21/25 6` to identify the underlying, expiration, option type, and strike.
+
+        Assignment and exercise activity can appear partly as financial rows. Review assigned or exercised options after import to confirm the resulting stock and option positions match your broker history.
+
+    **Required Columns** (included in Firstrade account history export):
+    - **Symbol** - Ticker symbol when Firstrade provides one; may be blank for options or fixed income
+    - **Quantity** - Shares/contracts; negative quantities are treated as sells
+    - **Price** - Execution price
+    - **Action** - `BUY` or `SELL` for imported trade rows
+    - **Description** - Security description; used to parse option contract details when Symbol is blank
+    - **TradeDate** - Trade date in `YYYY-MM-DD` format
+    - **SettledDate** - Settlement date
+    - **Commission** - Commission amount
+    - **Fee** - Regulatory or broker fee amount
+    - **CUSIP** - Used as a fallback when Symbol is blank and for background symbol resolution
+    - **RecordType** - Must be `Trade` for rows that should be imported
+
+    **Auto-Detection Headers**:
+    TradeTally recognizes Firstrade files by these headers:
+
+    ```text
+    Symbol,Quantity,Price,Action,Description,TradeDate,SettledDate,Interest,Amount,Commission,Fee,CUSIP,RecordType
+    ```
 
 === "ProjectX (Futures)"
 

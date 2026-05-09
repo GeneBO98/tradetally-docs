@@ -10,7 +10,7 @@ TradeTally combines trade journaling, performance analytics, charts, broker impo
 
 ## Key Features
 
-- **Multi-Broker Support** - Import trades from Lightspeed, Charles Schwab, ThinkorSwim, IBKR, E*TRADE, Webull, TradeStation, TradingView, Tradovate, Questrade, Tastytrade, ProjectX, and more
+- **Multi-Broker Support** - Import trades from Lightspeed, Charles Schwab, ThinkorSwim, IBKR, E*TRADE, Firstrade, Webull, TradeStation, TradingView, Tradovate, Questrade, Tastytrade, ProjectX, and more
 - **Real-time Market Data** - Live stock quotes and unrealized P&L tracking
 - **AI-Powered Analytics** - Personalized trading recommendations with configurable AI providers
 - **Comprehensive Analytics** - Dashboard, win rate, P&L, hold time, sector, and behavioral breakdowns

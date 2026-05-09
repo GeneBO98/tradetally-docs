@@ -155,6 +155,7 @@ The code auto-detects broker formats by checking for specific column combination
 - **IBKR (Activity)**: `symbol`, `datetime` or `date/time`, `quantity`, `price`
 - **IBKR (Trade Confirmation)**: `underlyingsymbol`, `strike`, `expiry`, `put/call`, `multiplier`, `buy/sell`
 - **E*TRADE**: `transaction date`, `transaction type`, (`buy` or `sell`)
+- **Firstrade**: `tradedate`, `settleddate`, `recordtype`, `description`, `cusip`
 - **Lightspeed**: `trade date`, `execution time`, `qty`, `price`
 - **ThinkorSwim**: `date`, `time`, `type`, `description` (with "type" in description section)
 - **Schwab**: `opened date`, `closed date`, `cost per share`, `proceeds per share`
